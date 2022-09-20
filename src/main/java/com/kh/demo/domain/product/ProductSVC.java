@@ -1,6 +1,4 @@
-package com.kh.demo.svc;
-
-import com.kh.demo.dao.Product;
+package com.kh.demo.domain.product;
 
 import java.util.List;
 import java.util.Optional;

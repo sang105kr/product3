@@ -1,7 +1,7 @@
 package com.kh.demo.web;
 
-import com.kh.demo.dao.Product;
-import com.kh.demo.svc.ProductSVC;
+import com.kh.demo.domain.product.Product;
+import com.kh.demo.domain.product.ProductSVC;
 import com.kh.demo.web.api.ApiResponse;
 import com.kh.demo.web.api.product.AddReq;
 import com.kh.demo.web.api.product.EditReq;
