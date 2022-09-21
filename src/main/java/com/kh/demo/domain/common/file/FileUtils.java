@@ -1,5 +1,6 @@
 package com.kh.demo.domain.common.file;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Component
 public class FileUtils {
   @Value("${attach.root_dir}") //application.properties 파일의 키값을 읽어옮
@@ -39,7 +41,6 @@ public class FileUtils {
     for (MultipartFile file : files) {
       UploadFile uploadFile = multipartFileToUpLoadFile(file, code, rid);
       uploadFiles.add(uploadFile);
-      storageFile(file,code,uploadFile.getStoreFileName());
     }
     return uploadFiles;
   }
@@ -63,8 +64,11 @@ public class FileUtils {
   //스토리지에 파일저장
   private void storageFile(MultipartFile file, AttachCode code, String storeFileName) {
     try {
-      file.transferTo(new File(getPath(code, storeFileName)));
+      File f = new File(getPath(code, storeFileName));
+      f.mkdirs(); //경로가 없으면 디렉토리 생성함.
+      file.transferTo(f);
     } catch (IOException e) {
+      log.info("storageFile error",e);
       throw new RuntimeException("첨부파일 스토리지 저장시 오류발생!");
     }
   }

@@ -1,16 +1,13 @@
 package com.kh.demo.domain.product;
 
-import com.kh.demo.domain.common.file.UploadFile;
-import com.kh.demo.domain.common.file.UploadFileDAO;
+import com.kh.demo.domain.common.file.AttachCode;
 import com.kh.demo.domain.common.file.FileUtils;
+import com.kh.demo.domain.common.file.UploadFileDAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,25 +30,10 @@ public class ProductSVCImpl implements ProductSVC{
   public Long save(Product product, MultipartFile file) {
     //1)상품등록
     Long id = save(product);
+
+    //2)첨부파일-상품설명
+    uploadFileDAO.addFile(fileUtils.multipartFileToUpLoadFile(file, AttachCode.P0101,id));
     
-    //2)첨부파일 메타정보 등록 (uploadfile테이블)
-    UploadFile uploadFile = new UploadFile();
-    uploadFile.setCode("P0101"); //상품관리
-    uploadFile.setRid(id);
-    uploadFile.setUploadFileName(file.getOriginalFilename());
-    uploadFile.setStoreFileName(fileUtils.storeFileName(file.getOriginalFilename()));
-    uploadFile.setFsize(String.valueOf(file.getSize()));
-    uploadFile.setFtype(file.getContentType());
-    uploadFileDAO.addFile(uploadFile);
-
-    //3)첨부파일 저장소에 저장 (xxx-xx-xxx.png)
-    try {
-      String storeFileName = fileUtils.storeFileName(file.getOriginalFilename());
-      file.transferTo(new File("d:/tmp/"+storeFileName));
-    } catch (IOException e) {
-      throw new RuntimeException("첨부파일 스토리지에 저장시 오류 발생!!");
-    }
-
     return id;
   }
 
@@ -60,40 +42,25 @@ public class ProductSVCImpl implements ProductSVC{
     //1)상품등록
     Long id = save(product);
 
-    //2)첨부파일 메타정보 등록 (uploadfile테이블)
-    List<UploadFile> uploadFiles = new ArrayList<>();
-
-    for (MultipartFile file : files) {
-      UploadFile uploadFile = new UploadFile();
-
-      uploadFile.setCode("P0101"); //상품관리
-      uploadFile.setRid(id);
-      uploadFile.setUploadFileName(file.getOriginalFilename());
-      uploadFile.setStoreFileName(fileUtils.storeFileName(file.getOriginalFilename()));
-      uploadFile.setFsize(String.valueOf(file.getSize()));
-      uploadFile.setFtype(file.getContentType());
-
-      uploadFiles.add(uploadFile);
-    }
-    uploadFileDAO.addFile(uploadFiles);
-
-
-    //3)첨부파일 저장소에 저장 (xxx-xx-xxx.png)
-    try {
-      for (MultipartFile file : files) {
-        String storeFileName = fileUtils.storeFileName(file.getOriginalFilename());
-        file.transferTo(new File("d:/tmp/" + storeFileName));
-      }
-    } catch (IOException e) {
-      throw new RuntimeException("첨부파일 스토리지에 저장시 오류 발생!!");
-    }
+    //2)첨부파일-이미지
+    uploadFileDAO.addFile(fileUtils.multipartFilesToUpLoadFiles(files,AttachCode.P0102,id));
 
     return id;
   }
 
   @Override
   public Long save(Product product, MultipartFile file, List<MultipartFile> files) {
-    return null;
+
+    //1)상품등록
+    Long id = save(product);
+
+    //2)첨부파일-상품설명
+    uploadFileDAO.addFile(fileUtils.multipartFileToUpLoadFile(file, AttachCode.P0101,id));
+
+    //2)첨부파일-이미지
+    uploadFileDAO.addFile(fileUtils.multipartFilesToUpLoadFiles(files,AttachCode.P0102,id));
+
+    return id;
   }
 
 

@@ -69,16 +69,21 @@ public class ProductController {
     //상품
     //주의 : view에서 mulitple인경우 파일첨부가 없더라도 빈문자열("")이 반환되어
     //      List<MultiPartFile> 빈객체 1개가 포함됨.
+    log.info("1");
     if(saveForm.getFile().isEmpty() && saveForm.getFiles().get(0).isEmpty()){
+      log.info("2");
       productId = productSVC.save(product);
     //상품,설명첨부
     }else if(!saveForm.getFile().isEmpty() && saveForm.getFiles().get(0).isEmpty()){
+      log.info("3");
       productId = productSVC.save(product,saveForm.getFile());
     //상품,이미지첨부
     }else if(saveForm.getFile().isEmpty() && !saveForm.getFiles().get(0).isEmpty()){
+      log.info("4");
       productId = productSVC.save(product,saveForm.getFiles());
     //상품,설명첨부,이미지첨부
     }else if(!saveForm.getFile().isEmpty() && !saveForm.getFiles().get(0).isEmpty()){
+      log.info("5");
       productId = productSVC.save(product,saveForm.getFile(),saveForm.getFiles());
     }
 
