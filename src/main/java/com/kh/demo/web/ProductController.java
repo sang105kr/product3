@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Controller
@@ -49,7 +50,10 @@ public class ProductController {
       log.info("파일크기={}", saveForm.getFile().getSize());
       log.info("파일유형={}", saveForm.getFile().getContentType());
       String originalFilename = saveForm.getFile().getOriginalFilename();
-      saveForm.getFile().transferTo(new File("d:/tmp/"+originalFilename));
+
+      String storeFileName = storeFileName(originalFilename);
+      saveForm.getFile().transferTo(new File("d:/tmp/"+storeFileName));
+      log.info("내부보관파일명={}",storeFileName);
     }
     if(!saveForm.getFiles().isEmpty()){
       List<MultipartFile> files = saveForm.getFiles();
@@ -57,6 +61,14 @@ public class ProductController {
         log.info("첨부파일이름={}", file.getOriginalFilename());
         log.info("파일크기={}", file.getSize());
         log.info("파일유형={}", file.getContentType());
+        String originalFilename = file.getOriginalFilename();
+        String storeFileName = storeFileName(originalFilename);
+        log.info("내부보관파일명={}",storeFileName);
+        try {
+          file.transferTo(new File("d:/tmp/"+storeFileName));
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
       });
     }
 
@@ -186,6 +198,23 @@ public class ProductController {
     });
     model.addAttribute("list", list);
     return "product/all";
+  }
+
+
+  //랜덤 파일 생성
+  private String storeFileName(String originalFileName){
+    //확장자 추출
+    int dotPosition = originalFileName.indexOf(".");
+    String ext = originalFileName.substring(dotPosition + 1);
+
+    //랜덤파일명
+    String storedFileName = UUID.randomUUID().toString();
+    StringBuffer sb = new StringBuffer();
+    storedFileName = sb.append(storedFileName)
+        .append(".")
+        .append(ext)
+        .toString();
+    return storedFileName;
   }
 
 }

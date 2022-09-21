@@ -23,7 +23,7 @@
 <div class="product-wrap">
   <h3>상품등록</h3>
   <div class="product-body">
-    <form id="saveForm" action="" th:action th:method="post" th:object="${form}">
+    <form id="saveForm" action="" th:action th:method="post" th:object="${form}" enctype="multipart/form-data">
       <div th:if="${#fields.hasGlobalErrors()}">
         <p class="fieldError" th:each="err:${#fields.globalErrors()}" th:text="${err}"></p>
       </div>
@@ -37,10 +37,20 @@
         <input type="text" th:field="*{quantity}">
         <div class="fieldError" th:errors="*{quantity}"></div>
       </div>
-      <div><label th:for="price">단가</label></div>
+`      <div><label th:for="price">단가</label></div>
       <div>
         <input type="text" th:field="*{price}">
         <div class="fieldError" th:errors="*{price}"></div>
+      </div>`
+      <div><label th:for="file">설명파일 첨부</label></div>
+      <div>
+        <input type="file" th:field="*{file}">
+        <div class="fieldError" th:errors="*{file}"></div>
+      </div>
+      <div><label th:for="files">이미지 첨부</label></div>
+      <div>
+        <input type="file" multiple="multiple" th:field="*{files}">
+        <div class="fieldError" th:errors="*{files}"></div>
       </div>
     </form>
   </div>
