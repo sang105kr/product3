@@ -1,5 +1,7 @@
 package com.kh.demo.domain.product;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +12,9 @@ public interface ProductSVC {
    * @return
    */
   Long save(Product product);
+  Long save(Product product, MultipartFile file);
+  Long save(Product product, MultipartFile file, List<MultipartFile> files);
+  Long save(Product product, List<MultipartFile> files);
 
   /**
    * 상품목록
