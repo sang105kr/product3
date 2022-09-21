@@ -2,7 +2,7 @@ package com.kh.demo.domain.product;
 
 import com.kh.demo.domain.common.file.UploadFile;
 import com.kh.demo.domain.common.file.UploadFileDAO;
-import com.kh.demo.domain.common.util.FileUtils;
+import com.kh.demo.domain.common.file.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -95,7 +95,6 @@ public class ProductSVCImpl implements ProductSVC{
   public Long save(Product product, MultipartFile file, List<MultipartFile> files) {
     return null;
   }
-
 
 
   //목록
