@@ -23,10 +23,10 @@ public class FileUtils {
 
     uploadFile.setCode(code.name());
     uploadFile.setRid(rid);
-    uploadFile.setUploadFileName(file.getOriginalFilename());
+    uploadFile.setUploadFilename(file.getOriginalFilename());
 
     String storeFileName = storeFileName(file.getOriginalFilename());
-    uploadFile.setStoreFileName(storeFileName);
+    uploadFile.setStoreFilename(storeFileName);
     uploadFile.setFsize(String.valueOf(file.getSize()));
     uploadFile.setFtype(file.getContentType());
 
@@ -48,7 +48,7 @@ public class FileUtils {
   //랜덤 파일 생성
   private String storeFileName(String originalFileName){
     //확장자 추출
-    int dotPosition = originalFileName.indexOf(".");
+    int dotPosition = originalFileName.lastIndexOf(".");
     String ext = originalFileName.substring(dotPosition + 1);
 
     //랜덤파일명

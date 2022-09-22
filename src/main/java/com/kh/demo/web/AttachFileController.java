@@ -42,6 +42,7 @@ public class AttachFileController {
     Resource resource = new UrlResource("file:///"+attachRoot+"/"+attachCode+"/"+storeFileName);
     return resource;
   }
+
   //다운로드
   @GetMapping("/file/{attachCode}/{fid}")
   public ResponseEntity<Resource> file(
@@ -54,9 +55,12 @@ public class AttachFileController {
     if(uploadFile.isEmpty()) return res;
 
     UploadFile attachFile = uploadFile.get();
-    String storeFileName = attachFile.getStoreFileName();
-    Resource resource = new UrlResource("file:///"+attachRoot+"/"+attachCode+"/"+storeFileName);
-    String encode = UriUtils.encode(storeFileName, StandardCharsets.UTF_8);
+    log.info("attachFile={}", attachFile);
+    String storeFileName = attachFile.getStoreFilename();
+    String uploadFileName = attachFile.getUploadFilename();
+
+    Resource resource = new UrlResource("file:"+attachRoot+attachCode+"/"+storeFileName);
+    String encode = UriUtils.encode(uploadFileName, StandardCharsets.UTF_8);
 
     String contentDisposition = "attachmemt; filename=\""+encode+"\"";
 
@@ -65,5 +69,4 @@ public class AttachFileController {
                         .body(resource);
     return res;
   }
-
 }
