@@ -2,6 +2,7 @@ package com.kh.demo.web;
 
 import com.kh.demo.domain.common.file.UploadFile;
 import com.kh.demo.domain.common.file.UploadFileDAO;
+import com.kh.demo.web.api.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,5 +70,27 @@ public class AttachFileController {
                         .header(HttpHeaders.CONTENT_DISPOSITION,contentDisposition)
                         .body(resource);
     return res;
+  }
+
+  //첨부파일 삭제
+  @ResponseBody
+  @DeleteMapping("/{fid}")
+  public ApiResponse<Object> deleteAttachFile(@PathVariable Long fid){
+    //1) 스토리지 파일을 삭제하기위해 첨부분류코드(code)와 저장파일명(storeFilename)을 가져온다
+    Optional<UploadFile> optioanl = uploadFileDAO.findFileByUploadFileId(fid);
+    if(optioanl.isEmpty()){
+      return ApiResponse.createApiResMsg("01", "찾고자 하는 파일이 없습니다.",null);
+    }
+    UploadFile uploadFile = optioanl.get();
+    //2) 스토리지 파일을 삭제한다.
+
+
+    //3) 첨부파일의 메터정보를 삭제한다.
+    int affectedRow = uploadFileDAO.deleteFileByUploadFildId(fid);
+
+    if(affectedRow == 1){
+      return ApiResponse.createApiResMsg("00", "성공",null);
+    }
+    return ApiResponse.createApiResMsg("99", "실패",null);
   }
 }

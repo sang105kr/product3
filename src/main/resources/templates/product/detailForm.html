@@ -39,6 +39,7 @@
     <a href="http://localhost:9080/attach/file/P0101/34"
        th:href="@{/attach/file/{attachCode}/{fid}(attachCode=${form.attachFile.code},fid=${form.attachFile.uploadfileId})}"
        th:text="${form.attachFile.uploadFilename}">상품설명</a>
+<!--       th:text="|${form.attachFile.uploadFilename}(${form.attachFile.fsize})(${form.attachFile.ftype})|">상품설명</a>-->
   </div>
   <div th:if="${form.imageFiles}">
     <div th:each="imageFile : ${form.imageFiles}">

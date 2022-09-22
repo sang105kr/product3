@@ -44,11 +44,40 @@
         <input type="text" th:field="*{price}">
         <div class="fieldError" th:errors="*{price}"></div>
       </div>
+      <!--파일첨부 첨부-->
+      <div><label th:for="file">설명파일 첨부</label></div>
+      <div>
+        <input type="file" th:field="*{file}">
+        <div class="fieldError" th:errors="*{file}"></div>
+      </div>
+      <div><label th:for="files">이미지 첨부</label></div>
+      <div>
+        <input type="file" multiple="multiple" th:field="*{files}">
+        <div class="fieldError" th:errors="*{files}"></div>
+      </div>
+
+      <div class="product-btngrp">
+        <button type="button" id="updateBtn">수정</button>
+        <button type="button" id="listBtn">목록</button>
+      </div>
     </form>
   </div>
-  <div class="product-btngrp">
-    <button type="button" id="updateBtn">수정</button>
-    <button type="button" id="listBtn">목록</button>
+
+  <!--파일첨부 참조-->
+  <div th:if="${form.attachFile}">
+    <a href="http://localhost:9080/attach/file/P0101/34"
+       th:href="@{/attach/file/{attachCode}/{fid}(attachCode=${form.attachFile.code},fid=${form.attachFile.uploadfileId})}"
+       th:text="${form.attachFile.uploadFilename}">상품설명</a>
+    <!--       th:text="|${form.attachFile.uploadFilename}(${form.attachFile.fsize})(${form.attachFile.ftype})|">상품설명</a>-->
+    <a href="" th:href="@{}" class="delBtn">삭제</a>
+  </div>
+  <div th:if="${form.imageFiles}">
+    <div th:each="imageFile : ${form.imageFiles}">
+      <img width="50px" src="http://localhost:9080/attach/img/P0102/82335ef9-18d7-4509-b3d4-df57d8d50a48.jpg"
+           th:src="@{/attach/img/{attachCode}/{storeFilename}(attachCode=${imageFile.code},storeFilename=${imageFile.storeFilename})}"
+           alt="이미지를 불러올수 없습니다">
+    </div>
+    <a href="" th:href="@{}" class="delBtn">삭제</a>
   </div>
 </div>
 <script>

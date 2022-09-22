@@ -131,12 +131,30 @@ public class ProductController {
   @GetMapping("/{id}/edit")
   public String updateForm(@PathVariable("id") Long productId,
                            Model model) {
-
+    //1)상품조회
     Optional<Product> findedProduct = productSVC.findByProductId(productId);
     UpdateForm updateForm = new UpdateForm();
     if(!findedProduct.isEmpty()) {
       BeanUtils.copyProperties(findedProduct.get(), updateForm);
     }
+
+    //2)첨부파일조회
+    //2-1)상품설명파일 조회
+    List<UploadFile> uploadFile = uploadFileDAO.getFilesByCodeWithRid(AttachCode.P0101.name(), productId);
+    if(uploadFile.size() > 0) {
+      UploadFile attachFile = uploadFile.get(0);
+      updateForm.setAttachFile(attachFile);
+    }
+    //2-2)상품이미지 조회
+    List<UploadFile> uploadFiles = uploadFileDAO.getFilesByCodeWithRid(AttachCode.P0102.name(), productId);
+    if(uploadFiles.size() > 0 ){
+      List<UploadFile> imageFiles = new ArrayList<>();
+      for (UploadFile file : uploadFiles) {
+        imageFiles.add(file);
+      }
+      updateForm.setImageFiles(imageFiles);
+    }
+
     model.addAttribute("form", updateForm);
 
     return "product/updateForm";
