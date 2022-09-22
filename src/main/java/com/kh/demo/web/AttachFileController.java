@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriUtils;
 
 import java.net.MalformedURLException;
@@ -31,7 +29,7 @@ public class AttachFileController {
   private final UploadFileDAO uploadFileDAO;
 
   //이미지
-  //@ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   @GetMapping("/img/{attachCode}/{storeFileName}")
   public Resource img(
@@ -45,6 +43,7 @@ public class AttachFileController {
 
   //다운로드
   @GetMapping("/file/{attachCode}/{fid}")
+  //반환 타입이 ResponseEntity<>인경우 응답메세지 바디에 직접쓰기작업시도함 (@ResponseBody불필요 )
   public ResponseEntity<Resource> file(
       @PathVariable String attachCode,
       @PathVariable Long fid  ) throws MalformedURLException {
@@ -59,9 +58,11 @@ public class AttachFileController {
     String storeFileName = attachFile.getStoreFilename();
     String uploadFileName = attachFile.getUploadFilename();
 
-    Resource resource = new UrlResource("file:"+attachRoot+attachCode+"/"+storeFileName);
-    String encode = UriUtils.encode(uploadFileName, StandardCharsets.UTF_8);
+    Resource resource = new UrlResource("file:///"+attachRoot+attachCode+"/"+storeFileName);
 
+    //첨부파일명의 한글깨짐방지
+    String encode = UriUtils.encode(uploadFileName, StandardCharsets.UTF_8);
+    //클라이언트가 파일을 다운로드해주기위해 응답메세지 헤더에 포함.
     String contentDisposition = "attachmemt; filename=\""+encode+"\"";
 
     res = ResponseEntity.ok()
