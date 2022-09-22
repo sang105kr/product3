@@ -108,16 +108,15 @@ public class ProductController {
     }
     //2)첨부파일조회
     //2-1)상품설명파일 조회
-    UploadFile attachFile = null;
-    List<UploadFile> filesByCodeWithRid = uploadFileDAO.getFilesByCodeWithRid(AttachCode.P0101.name(), productId);
-    if(filesByCodeWithRid.size() > 0) {
-       attachFile = filesByCodeWithRid.get(0);
+    List<UploadFile> uploadFile = uploadFileDAO.getFilesByCodeWithRid(AttachCode.P0101.name(), productId);
+    if(uploadFile.size() > 0) {
+       UploadFile attachFile = uploadFile.get(0);
        detailForm.setAttachFile(attachFile);
     }
     //2-2)상품이미지 조회
-    List<UploadFile> imageFiles = new ArrayList<>();
     List<UploadFile> uploadFiles = uploadFileDAO.getFilesByCodeWithRid(AttachCode.P0102.name(), productId);
     if(uploadFiles.size() > 0 ){
+      List<UploadFile> imageFiles = new ArrayList<>();
       for (UploadFile file : uploadFiles) {
         imageFiles.add(file);
       }

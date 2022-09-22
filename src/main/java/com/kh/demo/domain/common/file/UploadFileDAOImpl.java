@@ -114,7 +114,7 @@ public class UploadFileDAOImpl implements UploadFileDAO{
     StringBuffer sql = new StringBuffer();
 
     sql.append("SELECT  ");
-    sql.append("   uploadfile_id, ");
+    sql.append("   uploadfile_id,  ");
     sql.append("   code, ");
     sql.append("   rid,  ");
     sql.append("   store_filename, ");
