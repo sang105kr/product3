@@ -2,7 +2,7 @@ package com.kh.demo.web;
 
 import com.kh.demo.domain.common.file.AttachCode;
 import com.kh.demo.domain.common.file.UploadFile;
-import com.kh.demo.domain.common.file.UploadFileDAO;
+import com.kh.demo.domain.common.file.UploadFileSVC;
 import com.kh.demo.domain.product.Product;
 import com.kh.demo.domain.product.ProductSVC;
 import com.kh.demo.web.form.DetailForm;
@@ -29,7 +29,7 @@ import java.util.Optional;
 public class ProductController {
 
   private final ProductSVC productSVC;
-  private final UploadFileDAO uploadFileDAO;
+  private final UploadFileSVC uploadFileSVC;
 
   //등록양식
   @GetMapping("/add")
@@ -108,13 +108,13 @@ public class ProductController {
     }
     //2)첨부파일조회
     //2-1)상품설명파일 조회
-    List<UploadFile> uploadFile = uploadFileDAO.getFilesByCodeWithRid(AttachCode.P0101.name(), productId);
+    List<UploadFile> uploadFile = uploadFileSVC.getFilesByCodeWithRid(AttachCode.P0101.name(), productId);
     if(uploadFile.size() > 0) {
        UploadFile attachFile = uploadFile.get(0);
        detailForm.setAttachFile(attachFile);
     }
     //2-2)상품이미지 조회
-    List<UploadFile> uploadFiles = uploadFileDAO.getFilesByCodeWithRid(AttachCode.P0102.name(), productId);
+    List<UploadFile> uploadFiles = uploadFileSVC.getFilesByCodeWithRid(AttachCode.P0102.name(), productId);
     if(uploadFiles.size() > 0 ){
       List<UploadFile> imageFiles = new ArrayList<>();
       for (UploadFile file : uploadFiles) {
@@ -140,13 +140,13 @@ public class ProductController {
 
     //2)첨부파일조회
     //2-1)상품설명파일 조회
-    List<UploadFile> uploadFile = uploadFileDAO.getFilesByCodeWithRid(AttachCode.P0101.name(), productId);
+    List<UploadFile> uploadFile = uploadFileSVC.getFilesByCodeWithRid(AttachCode.P0101.name(), productId);
     if(uploadFile.size() > 0) {
       UploadFile attachFile = uploadFile.get(0);
       updateForm.setAttachFile(attachFile);
     }
     //2-2)상품이미지 조회
-    List<UploadFile> uploadFiles = uploadFileDAO.getFilesByCodeWithRid(AttachCode.P0102.name(), productId);
+    List<UploadFile> uploadFiles = uploadFileSVC.getFilesByCodeWithRid(AttachCode.P0102.name(), productId);
     if(uploadFiles.size() > 0 ){
       List<UploadFile> imageFiles = new ArrayList<>();
       for (UploadFile file : uploadFiles) {

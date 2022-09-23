@@ -1,6 +1,10 @@
-package com.kh.demo.web.api;
+package com.kh.demo.web;
 
-import com.kh.demo.domain.common.file.*;
+import com.kh.demo.domain.common.file.AttachCode;
+import com.kh.demo.domain.common.file.FileUtils;
+import com.kh.demo.domain.common.file.UploadFile;
+import com.kh.demo.domain.common.file.UploadFileSVC;
+import com.kh.demo.web.api.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -19,8 +23,8 @@ import java.util.Optional;
 //@Controller
 @RestController //@Controller + @ResponseBody
 @RequiredArgsConstructor
-@RequestMapping("/attach")
-public class AttachFileController {
+@RequestMapping("/api/attach")
+public class APIAttachFileController {
 
   private final UploadFileSVC uploadFileSVC;
   private final FileUtils fileUtils;
