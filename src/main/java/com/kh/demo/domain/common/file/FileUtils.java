@@ -14,6 +14,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class FileUtils {
+
   @Value("${attach.root_dir}") //application.properties 파일의 키값을 읽어옮
   private String attachRoot; //첨부파일 루트경로
 
@@ -64,7 +65,7 @@ public class FileUtils {
   //스토리지에 파일저장
   private void storageFile(MultipartFile file, AttachCode code, String storeFileName) {
     try {
-      File f = new File(getPath(code, storeFileName));
+      File f = new File(getAttachFilePath(code, storeFileName));
       f.mkdirs(); //경로가 없으면 디렉토리 생성함.
       file.transferTo(f);
     } catch (IOException e) {
@@ -73,8 +74,20 @@ public class FileUtils {
     }
   }
 
-  //첨부파일 경로
-  private String getPath(AttachCode code, String storeFileName) {
+  //첨부파일의 물리적인 경로 추출  ex)d:/tmp/P0101/xx-xxx-xxx-xxx.jpg
+  public String getAttachFilePath(AttachCode code, String storeFileName) {
     return this.attachRoot + code.name() + "/" + storeFileName;
+  }
+
+  //첨부파일 삭제
+  public void deleteAttachFile(AttachCode code, String storFileName){
+
+    File f = new File(getAttachFilePath(code,storFileName));
+    if(f.exists()){
+      f.delete();
+    }else{
+      throw new IllegalArgumentException("첨부파일 삭제 실패:"+code.name()+"-"+storFileName);
+    }
+
   }
 }
