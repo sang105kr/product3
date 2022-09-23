@@ -2,7 +2,7 @@ package com.kh.demo.domain.product;
 
 import com.kh.demo.domain.common.file.AttachCode;
 import com.kh.demo.domain.common.file.FileUtils;
-import com.kh.demo.domain.common.file.UploadFileDAO;
+import com.kh.demo.domain.common.file.UploadFileSVC;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.Optional;
 //@Transactional
 public class ProductSVCImpl implements ProductSVC{
   private final ProductDAO productDAO;
-  private final UploadFileDAO uploadFileDAO;
+  private final UploadFileSVC uploadFileSVC;
   private final FileUtils fileUtils;
 
   //등록
@@ -32,7 +32,7 @@ public class ProductSVCImpl implements ProductSVC{
     Long id = save(product);
 
     //2)첨부파일-상품설명
-    uploadFileDAO.addFile(fileUtils.multipartFileToUpLoadFile(file, AttachCode.P0101,id));
+    uploadFileSVC.addFile(file,AttachCode.P0101,id);
     
     return id;
   }
@@ -43,7 +43,7 @@ public class ProductSVCImpl implements ProductSVC{
     Long id = save(product);
 
     //2)첨부파일-이미지
-    uploadFileDAO.addFile(fileUtils.multipartFilesToUpLoadFiles(files,AttachCode.P0102,id));
+    uploadFileSVC.addFile(files,AttachCode.P0102,id);
 
     return id;
   }
@@ -55,10 +55,10 @@ public class ProductSVCImpl implements ProductSVC{
     Long id = save(product);
 
     //2)첨부파일-상품설명
-    uploadFileDAO.addFile(fileUtils.multipartFileToUpLoadFile(file, AttachCode.P0101,id));
+    uploadFileSVC.addFile(file,AttachCode.P0101,id);
 
     //2)첨부파일-이미지
-    uploadFileDAO.addFile(fileUtils.multipartFilesToUpLoadFiles(files,AttachCode.P0102,id));
+    uploadFileSVC.addFile(files,AttachCode.P0102,id);
 
     return id;
   }

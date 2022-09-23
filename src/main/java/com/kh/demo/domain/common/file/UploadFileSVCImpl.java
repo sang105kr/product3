@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,24 +17,36 @@ public class UploadFileSVCImpl implements UploadFileSVC{
   private final UploadFileDAO uploadFileDAO;
   private final FileUtils fileUtils;
 
+
   /**
    * 업로드 파일 등록 - 단건
    *
-   * @param uploadFile
+   * @param multipartFile
+   * @param code
+   * @param rid
    * @return 파일Id
    */
   @Override
-  public Long addFile(UploadFile uploadFile) {
-    return uploadFileDAO.addFile(uploadFile);
+  public Long addFile(MultipartFile multipartFile, AttachCode code, Long rid) {
+    //1) 스토리지 저장
+    UploadFile uploadFile = fileUtils.multipartFileToUpLoadFile(multipartFile, code, rid);
+    //2) 첨부파일 메타정보 저장
+    Long affectedRow = uploadFileDAO.addFile(uploadFile);
+    return affectedRow;
   }
 
   /**
    * 업로드 파일 등록 - 여러건
    *
-   * @param uploadFiles
+   * @param multipartFiles
+   * @param code
+   * @param rid
    */
   @Override
-  public void addFile(List<UploadFile> uploadFiles) {
+  public void addFile(List<MultipartFile> multipartFiles, AttachCode code, Long rid) {
+    //1) 스토리지 저장
+    List<UploadFile> uploadFiles = fileUtils.multipartFilesToUpLoadFiles(multipartFiles, code, rid);
+    //2) 첨부파일 메타정보 저장
     uploadFileDAO.addFile(uploadFiles);
   }
 
@@ -93,6 +106,18 @@ public class UploadFileSVCImpl implements UploadFileSVC{
    */
   @Override
   public int deleteFileByCodeWithRid(String code, Long rid) {
-    return uploadFileDAO.deleteFileByCodeWithRid(code, rid);
+
+    List<UploadFile> uploadFiles = uploadFileDAO.getFilesByCodeWithRid(code, rid);
+    if(uploadFiles.size() == 0) return 0;
+
+    //1) 스토리지 파일을 삭제한다.
+    for( UploadFile uploadFile : uploadFiles) {
+      fileUtils.deleteAttachFile(AttachCode.valueOf(code), uploadFile.getStoreFilename());
+    }
+
+    //2) 첨부파일의 메터정보를 삭제한다.
+    int affectedRow = uploadFileDAO.deleteFileByCodeWithRid(code,rid);
+
+    return affectedRow;
   }
 }
