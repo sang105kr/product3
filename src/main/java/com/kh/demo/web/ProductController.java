@@ -73,21 +73,17 @@ public class ProductController {
     //상품
     //주의 : view에서 mulitple인경우 파일첨부가 없더라도 빈문자열("")이 반환되어
     //      List<MultiPartFile> 빈객체 1개가 포함됨.
-    log.info("1");
+    //상품 메타정보 저장
     if(saveForm.getFile().isEmpty() && saveForm.getFiles().get(0).isEmpty()){
-      log.info("2");
       productId = productSVC.save(product);
     //상품,설명첨부
     }else if(!saveForm.getFile().isEmpty() && saveForm.getFiles().get(0).isEmpty()){
-      log.info("3");
       productId = productSVC.save(product,saveForm.getFile());
     //상품,이미지첨부
     }else if(saveForm.getFile().isEmpty() && !saveForm.getFiles().get(0).isEmpty()){
-      log.info("4");
       productId = productSVC.save(product,saveForm.getFiles());
     //상품,설명첨부,이미지첨부
     }else if(!saveForm.getFile().isEmpty() && !saveForm.getFiles().get(0).isEmpty()){
-      log.info("5");
       productId = productSVC.save(product,saveForm.getFile(),saveForm.getFiles());
     }
 
@@ -177,7 +173,7 @@ public class ProductController {
     if(updateForm.getQuantity() > 100){
       bindingResult.rejectValue("quantity","product.quantity",new Integer[]{100},"상품수량 초과");
       log.info("bindingResult={}", bindingResult);
-      return "product/saveForm";
+      return "product/updateForm";
     }
 
     //오브젝트검증
@@ -185,15 +181,47 @@ public class ProductController {
     if(updateForm.getQuantity() * updateForm.getPrice() > 10_000_000L){
       bindingResult.reject("product.totalPrice",new Integer[]{1000},"총액 초과!");
       log.info("bindingResult={}", bindingResult);
-      return "product/saveForm";
+      return "product/updateForm";
     }
 
     Product product = new Product();
     BeanUtils.copyProperties(updateForm, product);
-    productSVC.update(productId, product);
+
+    //상품 메타정보 수정
+    if(updateForm.getFile().isEmpty() && updateForm.getFiles().get(0).isEmpty()){
+      productSVC.update(productId, product);
+    //상품,설명첨부
+    }else if(!updateForm.getFile().isEmpty() && updateForm.getFiles().get(0).isEmpty()){
+      // 상품설명 첨부파일 존재유무 체크
+      if(isExistAttachFile(productId,bindingResult)){
+        return "product/updateForm";
+      };
+      productSVC.update(productId,product,updateForm.getFile());
+    //상품,이미지첨부
+    }else if(updateForm.getFile().isEmpty() && !updateForm.getFiles().get(0).isEmpty()){
+      productSVC.update(productId,product,updateForm.getFiles());
+    //상품,설명첨부,이미지첨부
+    }else if(!updateForm.getFile().isEmpty() && !updateForm.getFiles().get(0).isEmpty()){
+      // 상품설명 첨부파일 존재유무 체크
+      if(isExistAttachFile(productId,bindingResult)){
+        return "product/updateForm";
+      };
+      productSVC.update(productId,product,updateForm.getFile(),updateForm.getFiles());
+    }
 
     redirectAttributes.addAttribute("id", productId);
     return "redirect:/products/{id}/detail";
+  }
+
+  // 상품설명 첨부파일 존재유무
+  private boolean isExistAttachFile(Long productId, BindingResult bindingResult) {
+    boolean isExist = false;
+    List<UploadFile> uploadFiles = uploadFileSVC.getFilesByCodeWithRid(AttachCode.P0101.name(), productId);
+    if(uploadFiles.size() > 0) {
+      isExist = true;
+      bindingResult.rejectValue("file",null,"상품설명 첨부파일이 존재합니다.");
+    }
+    return isExist;
   }
 
   //삭제
@@ -202,7 +230,7 @@ public class ProductController {
 
     productSVC.deleteByProductId(productId);
 
-    return "redirect:/products/all";  //항시 절대경로로
+    return "redirect:/products";  //항시 절대경로로
   }
 
   //목록

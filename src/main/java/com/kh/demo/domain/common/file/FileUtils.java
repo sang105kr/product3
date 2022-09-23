@@ -85,9 +85,10 @@ public class FileUtils {
     File f = new File(getAttachFilePath(code,storFileName));
     if(f.exists()){
       f.delete();
-    }else{
-      throw new IllegalArgumentException("첨부파일 삭제 실패:"+code.name()+"-"+storFileName);
     }
+//    else{
+//      throw new IllegalArgumentException("첨부파일 삭제 실패:"+code.name()+"-"+storFileName);
+//    }
 
   }
 }
